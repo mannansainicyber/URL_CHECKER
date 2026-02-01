@@ -51,5 +51,5 @@ def predict_phishing(url: str, model):
         "phishing": prediction,
         "confidence": round(confidence, 3),
         "reasons": createlistreasonswf(df.to_dict(orient="records")[0]),
-        "creation-day": datetime.datetime.now()
+        "creation-day": str(datetime.datetime.now())
     }

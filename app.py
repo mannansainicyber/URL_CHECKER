@@ -1,9 +1,13 @@
-import os
-import joblib
-from flask import Flask, render_template, request, jsonify
-from utils.url_handler import normalize_url
-from utils.cache_manager import find_in_dump, save_dump
-from utils.predictor import predict_phishing
+try:
+    import os
+    import hashlib
+    import joblib
+    from flask import Flask, render_template, request, jsonify
+    from utils.url_handler import normalize_url
+    from utils.cache_manager import find_in_dump, save_dump
+    from utils.predictor import predict_phishing
+except ImportError:
+    print("Error! Required files or modules are missing, make sure utils files exist and flask, scikit-learn, joblib and pandas are installed!")
 
 app = Flask(__name__)
 
