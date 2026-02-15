@@ -33,7 +33,7 @@ Phishing attacks often rely on visual deception and URL manipulation. This tool 
     * **Rule-based logic** scans for known red flags.
 5.  **Output:** A JSON response is returned with the verdict and cached for future lookups.
 
-![Alt text](screenshot.png)
+![Alt text](Screenshot.png)
 
 ---
 
