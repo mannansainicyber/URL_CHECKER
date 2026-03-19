@@ -36,6 +36,12 @@ Phishing attacks often rely on visual deception and URL manipulation. This tool 
 ![Alt text](Screenshot.png)
 
 ---
+## Setup
+1. Clone the repo
+2. Install deps: `pip install -r requirements.txt`
+3. Download the dataset from [Kaggle](https://www.kaggle.com/datasets/shashwatwork/web-page-phishing-detection-dataset) and place `dataset_phishing.csv` in the root
+4. Run `python retrain.py` to generate `model.pkl`
+5. Run `python app.py`
 
 ## Tech Stack
 
