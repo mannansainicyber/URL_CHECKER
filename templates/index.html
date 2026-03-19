@@ -4,41 +4,55 @@
   <meta charset="UTF-8">
   <title>URL Scanner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, sans-serif;
     }
 
     body {
-      height: 100vh;
-      background: white;
+      min-height: 100vh;
+      background: #f5f4f0;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #111;
+      font-family: 'DM Sans', system-ui, sans-serif;
     }
 
     .wrap {
       width: 100%;
-      max-width: 560px;
-      padding: 28px;
+      max-width: 540px;
+      margin: 24px;
+      background: #fff;
+      padding: 56px 48px;
       text-align: center;
+      border: 1px solid #e4e2da;
+      border-radius: 12px;
+      box-shadow:
+        0 1px 2px rgba(0,0,0,0.04),
+        0 4px 20px rgba(0,0,0,0.06),
+        0 0 0 1px rgba(255,255,255,0.8) inset;
     }
 
     h1 {
       font-size: 26px;
       font-weight: 600;
-      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+      color: #0d0d0d;
+      margin-bottom: 4px;
     }
 
     .meta {
-      font-size: 12px;
-      color: #777;
-      margin-bottom: 26px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #aaa;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
     }
 
     .row {
@@ -48,68 +62,91 @@
 
     input {
       flex: 1;
-      padding: 14px;
-      font-size: 14px;
-      border: 1px solid #ddd;
+      padding: 13px 15px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: #111;
+      background: #fff;
+      border: 1px solid #dddbd3;
       border-radius: 8px;
       outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
 
+    input::placeholder { color: #bbb; }
+
     input:focus {
-      border-color: #000;
+      border-color: #111;
+      box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
     }
 
     button {
-      padding: 14px 20px;
+      padding: 13px 22px;
+      font-family: 'DM Sans', sans-serif;
       font-size: 14px;
-      border: 1px solid #000;
-      background: #000;
-      color: white;
+      font-weight: 500;
+      border: 1px solid #111;
+      background: #111;
+      color: #fff;
       border-radius: 8px;
       cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
     }
+
+    button:hover { background: #222; }
+    button:active { transform: scale(0.97); }
 
     .result {
       margin-top: 22px;
-      min-height: 22px;
+      min-height: 24px;
       font-size: 14px;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
     }
 
-    .safe { color: #1a7f37; }
+    .safe  { color: #1a7f37; }
     .danger { color: #c92a2a; }
 
+    .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .safe  .dot { background: #1a7f37; }
+    .danger .dot { background: #c92a2a; }
+
     .footer {
-      margin-top: 18px;
-      font-size: 12px;
-      color: #888;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f0ede6;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #ccc;
       display: flex;
       justify-content: space-between;
     }
 
     .loader {
-      width: 14px;
-      height: 14px;
-      border: 2px solid #ddd;
-      border-top: 2px solid #000;
+      width: 14px; height: 14px;
+      border: 2px solid #e4e2da;
+      border-top-color: #555;
       border-radius: 50%;
-      display: inline-block;
-      animation: spin 0.6s linear infinite;
-      vertical-align: middle;
-      margin-right: 6px;
+      animation: spin 0.55s linear infinite;
+      flex-shrink: 0;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 
 <body>
-
   <div class="wrap">
     <h1>URL Scanner</h1>
-    <div class="meta">Fast. Local. Silent.</div>
+    <div class="meta">Local &nbsp;·&nbsp; Silent</div>
 
     <div class="row">
       <input id="urlInput" placeholder="example.com" autofocus>
@@ -146,15 +183,14 @@
       const countBox = document.getElementById("count");
 
       if (!url.trim()) {
-        result.textContent = "Enter a URL.";
         result.className = "result danger";
+        result.innerHTML = `<span class="dot"></span>Enter a URL.`;
         return;
       }
 
       url = cleanURL(url);
-
-      result.innerHTML = `<span class="loader"></span>Scanning`;
       result.className = "result";
+      result.innerHTML = `<span class="loader"></span>Scanning`;
 
       const start = performance.now();
 
@@ -167,25 +203,25 @@
 
         const data = await res.json();
         const end = performance.now();
+        const pct = Math.round(data.confidence * 100);
 
         scans++;
         countBox.textContent = `Scans: ${scans}`;
         timeBox.textContent = `${Math.round(end - start)} ms`;
 
         if (data.phishing === 1) {
-          result.textContent = `Phishing (${data.confidence * 100}% sure)`;
           result.className = "result danger";
+          result.innerHTML = `<span class="dot"></span>Phishing &mdash; ${pct}% sure`;
         } else {
-          result.textContent = `Safe (${data.confidence * 100}% sure)`;
           result.className = "result safe";
+          result.innerHTML = `<span class="dot"></span>Safe &mdash; ${pct}% sure`;
         }
 
       } catch (e) {
-        result.textContent = "Server error.";
         result.className = "result danger";
+        result.innerHTML = `<span class="dot"></span>Server error.`;
       }
     }
   </script>
-
 </body>
 </html>
